@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muradak Admin — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: linear-gradient(135deg, #4a1a05 0%, #8B4513 50%, #CD853F 100%);
+  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.card {
+  background: #fff; border-radius: 24px; padding: 48px 40px;
+  width: 100%; max-width: 420px; box-shadow: 0 24px 64px rgba(0,0,0,.35);
+  text-align: center;
+}
+.logo { font-size: 48px; margin-bottom: 12px; }
+.title { font-size: 24px; font-weight: 800; color: #8B4513; }
+.subtitle { color: #888; font-size: 14px; margin-bottom: 32px; margin-top: 4px; }
+.form-group { margin-bottom: 18px; text-align: right; }
+label { display: block; font-size: 14px; font-weight: 600; color: #2C1A0E; margin-bottom: 6px; }
+input {
+  width: 100%; padding: 13px 16px; border: 2px solid #F5E8D8;
+  border-radius: 12px; font-family: inherit; font-size: 15px;
+  outline: none; transition: border-color .2s; direction: ltr; text-align: left;
+}
+input:focus { border-color: #CD853F; }
+.btn {
+  width: 100%; padding: 15px; margin-top: 8px;
+  background: linear-gradient(135deg, #8B4513, #A0522D);
+  color: #fff; border: none; border-radius: 12px;
+  font-family: inherit; font-size: 17px; font-weight: 700;
+  cursor: pointer; transition: opacity .2s;
+}
+.btn:hover { opacity: .9; }
+.error {
+  background: #FFEBEE; color: #C62828; border-radius: 10px;
+  padding: 10px 14px; font-size: 14px; margin-bottom: 16px; display: none;
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">🔐</div>
+  <div class="title">Muradak Admin</div>
+  <div class="subtitle">لوحة التحكم — Control Panel</div>
+  <div class="error" id="errMsg"></div>
+  <div class="form-group">
+    <label>اسم المستخدم / Username</label>
+    <input type="text" id="username" placeholder="admin" autocomplete="username">
+  </div>
+  <div class="form-group">
+    <label>كلمة المرور / Password</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+  </div>
+  <button class="btn" onclick="doLogin()">دخول — Login</button>
+</div>
+
+<script>
+async function doLogin() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  const err      = document.getElementById('errMsg');
+  err.style.display = 'none';
+  if (!username || !password) { err.textContent = 'يرجى إدخال بيانات الدخول'; err.style.display = 'block'; return; }
+  const fd = new FormData();
+  fd.append('username', username);
+  fd.append('password', password);
+  const res  = await fetch('auth.php', { method: 'POST', body: fd });
+  const data = await res.json();
+  if (data.success) {
+    window.location.href = 'dashboard.php';
+  } else {
+    err.textContent = data.error || 'بيانات الدخول غير صحيحة';
+    err.style.display = 'block';
+  }
+}
+</script>
+</body>
+</html>
